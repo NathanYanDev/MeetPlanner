@@ -2,10 +2,12 @@ package dev.nathanyan.MeetPlanner.service;
 
 import dev.nathanyan.MeetPlanner.model.Meeting;
 import dev.nathanyan.MeetPlanner.repository.MeetingRepository;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
 
+@Service
 public class MeetingService {
     private final MeetingRepository meetingRepository;
 
@@ -19,17 +21,10 @@ public class MeetingService {
     }
 
     // Create
-    public String create(String title, String description, LocalDate dateTime, String location, Integer duration) {
+    public String create(Meeting meeting) {
         LocalDate createdAt = LocalDate.now();
 
-        Meeting meeting = new Meeting();
-
-        meeting.setTitle(title);
-        meeting.setDescription(description);
-        meeting.setDateTime(dateTime);
-        meeting.setLocation(location);
         meeting.setCreatedAt(createdAt);
-        meeting.setDuration(duration);
 
         meetingRepository.save(meeting);
 
