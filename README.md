@@ -25,7 +25,7 @@
 
 - **Spring Boot:** Framework para desenvolvimento de aplicações Java.
 - **Spring Data JPA:** Para persistência de dados e integração com banco de dados.
-- **H2 Database:** Banco de dados em memória para desenvolvimento (pode ser substituído por MySQL, PostgreSQL, etc.).
+- **MySQL Database:** Banco de dados relacional.
 - **JavaMailSender:** Para envio de e-mails.
 - **Swagger:** Para documentação da API.
 - **Maven:** Para gerenciamento de dependências.
