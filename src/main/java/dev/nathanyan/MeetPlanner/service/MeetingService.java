@@ -4,33 +4,34 @@ import dev.nathanyan.MeetPlanner.model.Meeting;
 import dev.nathanyan.MeetPlanner.repository.MeetingRepository;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.List;
+import java.util.logging.Logger;
 
 @Service
 public class MeetingService {
+    Logger logger = Logger.getLogger(getClass().getName());
+
     private final MeetingRepository meetingRepository;
 
     public MeetingService(MeetingRepository meetingRepository) {
         this.meetingRepository = meetingRepository;
     }
 
-    // Read
     public List<Meeting> getAll() {
         return meetingRepository.findAll();
     }
 
-    // Create
-    public String create(Meeting meeting) {
-        LocalDate createdAt = LocalDate.now();
+    public String create(Meeting meeting){
+        try{
+            meetingRepository.save(meeting);
 
-        meeting.setCreatedAt(createdAt);
+            return "Meeting created successfully";
+        }catch(Exception err) {
+            logger.info(err.getMessage());
 
-        meetingRepository.save(meeting);
-
-        return "Meeting created successfully";
+            return "The meeting cannot be created, check the fields and try again";
+        }
     }
 
-    // Delete
-    public void delete(Long id) {meetingRepository.deleteById(id);}
+    public void delete(String id) {meetingRepository.deleteById(id);}
 }

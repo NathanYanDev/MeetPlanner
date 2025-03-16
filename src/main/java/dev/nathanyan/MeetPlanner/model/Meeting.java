@@ -1,5 +1,6 @@
 package dev.nathanyan.MeetPlanner.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -15,8 +18,8 @@ import java.time.LocalDate;
 @Entity
 public class Meeting {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
     @Column(nullable = false)
     private String title;
@@ -30,8 +33,13 @@ public class Meeting {
     private String location;
 
     @Column(nullable = false)
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
 
     @Column(nullable = false)
     private Integer duration;
+
+    @ManyToMany
+    @JoinTable(name = "meeting_participant", joinColumns = @JoinColumn(name = "meeting_id"), inverseJoinColumns = @JoinColumn(name = "participant_id"))
+    @JsonIgnoreProperties("meetings")
+    private Set<Participant> participants;
 }
