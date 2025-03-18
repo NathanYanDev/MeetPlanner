@@ -6,12 +6,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
 
 @Service
 public class ParticipantsService {
-    Logger logger = Logger.getLogger(getClass().getName());
-
     private final ParticipantsRepository participantsRepository;
 
     public ParticipantsService(ParticipantsRepository participantsRepository) {
@@ -26,13 +23,7 @@ public class ParticipantsService {
             return participantsRepository.findAllByEmail(emails);
     }
 
-    public String create(Participant participant) {
-        try {
-            participantsRepository.save(participant);
-            return "Participant successfully added";
-        } catch (Exception err) {
-            logger.info(err.getMessage());
-            return "The participant cannot be created, check the fields and try again";
-        }
+    public Participant create(Participant participant) {
+        return participantsRepository.save(participant);
     }
 }
