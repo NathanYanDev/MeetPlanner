@@ -1,6 +1,6 @@
 package dev.nathanyan.MeetPlanner.service;
 
-import dev.nathanyan.MeetPlanner.model.Participant;
+import dev.nathanyan.MeetPlanner.domain.participant.Participant;
 import dev.nathanyan.MeetPlanner.repository.ParticipantsRepository;
 import org.springframework.stereotype.Service;
 
