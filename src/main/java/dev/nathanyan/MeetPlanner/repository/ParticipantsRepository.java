@@ -1,6 +1,6 @@
 package dev.nathanyan.MeetPlanner.repository;
 
-import dev.nathanyan.MeetPlanner.model.Participant;
+import dev.nathanyan.MeetPlanner.domain.participant.Participant;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
