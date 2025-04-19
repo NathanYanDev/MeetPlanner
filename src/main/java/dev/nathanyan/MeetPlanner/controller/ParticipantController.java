@@ -1,32 +1,30 @@
 package dev.nathanyan.MeetPlanner.controller;
 
-import dev.nathanyan.MeetPlanner.domain.participant.ParticipantRequestDTO;
-import dev.nathanyan.MeetPlanner.domain.participant.ParticipantResponseDTO;
+import dev.nathanyan.MeetPlanner.dto.ParticipantDTO;
+import dev.nathanyan.MeetPlanner.dto.request.participant.CreateParticipant;
 import dev.nathanyan.MeetPlanner.handler.ResponseHandler;
-import dev.nathanyan.MeetPlanner.domain.participant.Participant;
-import dev.nathanyan.MeetPlanner.service.ParticipantsService;
+import dev.nathanyan.MeetPlanner.service.ParticipantService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
 @RestController
 @RequestMapping("/participant")
-public class ParticipantsController {
-    private final ParticipantsService participantsService;
+public class ParticipantController {
+    private final ParticipantService participantService;
 
-    public ParticipantsController(ParticipantsService participantsService) {
-        this.participantsService = participantsService;
+    public ParticipantController(ParticipantService participantService) {
+        this.participantService = participantService;
     }
 
     @GetMapping
     public ResponseEntity<Object> getAll() {
-        List<ParticipantResponseDTO> participantList = participantsService.listAll().stream().map(ParticipantResponseDTO::new).toList();
+        List<ParticipantDTO> participantList = participantService.listAll();
 
         if(participantList.isEmpty()) {
             return ResponseHandler.generateResponse("No participant has yet been created", HttpStatus.OK, Collections.emptyList());
@@ -36,11 +34,11 @@ public class ParticipantsController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Object> create(@RequestBody @Validated ParticipantRequestDTO body) {
-        Participant participant = new Participant(body.email(), body.name(), body.password(), LocalDateTime.now());
+    public ResponseEntity<Object> create(@RequestBody @Validated CreateParticipant body) {
+        ParticipantDTO newParticipant = participantService.create(body);
 
         try {
-            return ResponseHandler.generateResponse("The participant was created successfully", HttpStatus.CREATED, participantsService.create(participant));
+            return ResponseHandler.generateResponse("The participant was created successfully", HttpStatus.CREATED, newParticipant);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There was an error, check the fields and try again");
         }

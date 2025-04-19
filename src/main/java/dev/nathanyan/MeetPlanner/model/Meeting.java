@@ -1,10 +1,7 @@
-package dev.nathanyan.MeetPlanner.domain.meeting;
+package dev.nathanyan.MeetPlanner.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import dev.nathanyan.MeetPlanner.domain.meetingparticipant.MeetingParticipant;
-import dev.nathanyan.MeetPlanner.domain.participant.Participant;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -42,11 +39,11 @@ public class Meeting {
     private Integer duration;
 
     @OneToMany(mappedBy = "meeting", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private Set<MeetingParticipant> participants = new HashSet<>();
 
-    public Meeting(String title, String description, LocalDate dateTime, String location, LocalDateTime createdAt, Integer duration) {
+    public Meeting(String title, LocalDate dateTime, String location, LocalDateTime createdAt, Integer duration) {
         this.title = title;
-        this.description = description;
         this.dateTime = dateTime;
         this.location = location;
         this.createdAt = createdAt;

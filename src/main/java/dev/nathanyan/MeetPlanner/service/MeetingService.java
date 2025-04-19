@@ -1,10 +1,12 @@
 package dev.nathanyan.MeetPlanner.service;
 
-import dev.nathanyan.MeetPlanner.domain.meeting.Meeting;
+import dev.nathanyan.MeetPlanner.dto.request.meeting.CreateMeetingRequest;
+import dev.nathanyan.MeetPlanner.model.Meeting;
 import dev.nathanyan.MeetPlanner.repository.MeetingRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class MeetingService {
@@ -16,6 +18,10 @@ public class MeetingService {
 
     public List<Meeting> getAll() {
         return meetingRepository.findAll();
+    }
+
+    public Optional<Meeting> getById(String meetingId) {
+        return meetingRepository.findById(meetingId);
     }
 
     public Meeting create(Meeting meeting){
