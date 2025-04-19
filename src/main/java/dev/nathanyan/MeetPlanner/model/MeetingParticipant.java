@@ -1,7 +1,5 @@
-package dev.nathanyan.MeetPlanner.domain.meetingparticipant;
+package dev.nathanyan.MeetPlanner.model;
 
-import dev.nathanyan.MeetPlanner.domain.meeting.Meeting;
-import dev.nathanyan.MeetPlanner.domain.participant.Participant;
 import dev.nathanyan.MeetPlanner.types.Status;
 import jakarta.persistence.*;
 import lombok.*;
@@ -11,7 +9,6 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "meeting_participant")
 public class MeetingParticipant {
@@ -32,4 +29,11 @@ public class MeetingParticipant {
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
+
+    public MeetingParticipant(Meeting meeting, Participant participant, Status status, LocalDateTime createdAt) {
+        this.meeting = meeting;
+        this.participant = participant;
+        this.status = status;
+        this.createdAt = createdAt;
+    }
 }

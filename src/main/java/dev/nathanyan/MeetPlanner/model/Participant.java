@@ -1,17 +1,13 @@
-package dev.nathanyan.MeetPlanner.domain.participant;
+package dev.nathanyan.MeetPlanner.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import dev.nathanyan.MeetPlanner.domain.meeting.Meeting;
-import dev.nathanyan.MeetPlanner.domain.meetingparticipant.MeetingParticipant;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 
@@ -33,10 +29,16 @@ public class Participant {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
+
     @OneToMany(mappedBy = "participant", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private Set<MeetingParticipant> meetings = new HashSet<>();
 
     public Participant(String email, String name, String password, LocalDateTime createdAt) {
