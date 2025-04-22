@@ -4,7 +4,7 @@ import dev.nathanyan.MeetPlanner.model.Meeting;
 import dev.nathanyan.MeetPlanner.model.MeetingParticipant;
 import dev.nathanyan.MeetPlanner.model.Participant;
 import dev.nathanyan.MeetPlanner.repository.MeetingParticipantRepository;
-import dev.nathanyan.MeetPlanner.types.Status;
+import dev.nathanyan.MeetPlanner.model.enums.MeetingStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -18,14 +18,14 @@ public class MeetingParticipantService {
         this.meetingParticipantRepository = meetingParticipantRepository;
     }
 
-    public String create(Meeting meeting, Set<Participant> participants, Status status) {
+    public String create(Meeting meeting, Set<Participant> participants, MeetingStatus meetingStatus) {
 
         try {
             MeetingParticipant meetingParticipant = new MeetingParticipant();
 
             meetingParticipant.setMeeting(meeting);
             meetingParticipant.setCreatedAt(LocalDateTime.now());
-            meetingParticipant.setStatus(status);
+            meetingParticipant.setMeetingStatus(meetingStatus);
 
             for(Participant participant: participants) {
                 meetingParticipant.setParticipant(participant);

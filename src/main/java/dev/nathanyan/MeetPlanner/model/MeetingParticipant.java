@@ -1,6 +1,6 @@
 package dev.nathanyan.MeetPlanner.model;
 
-import dev.nathanyan.MeetPlanner.types.Status;
+import dev.nathanyan.MeetPlanner.model.enums.MeetingStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,15 +25,15 @@ public class MeetingParticipant {
     private Participant participant;
 
     @Enumerated(EnumType.STRING)
-    private Status status = Status.PENDING;
+    private MeetingStatus meetingStatus;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    public MeetingParticipant(Meeting meeting, Participant participant, Status status, LocalDateTime createdAt) {
+    public MeetingParticipant(Meeting meeting, Participant participant, MeetingStatus meetingStatus, LocalDateTime createdAt) {
         this.meeting = meeting;
         this.participant = participant;
-        this.status = status;
+        this.meetingStatus = meetingStatus;
         this.createdAt = createdAt;
     }
 }
