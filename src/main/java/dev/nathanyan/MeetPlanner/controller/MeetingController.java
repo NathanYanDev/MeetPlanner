@@ -1,7 +1,6 @@
 package dev.nathanyan.MeetPlanner.controller;
 
 import dev.nathanyan.MeetPlanner.dto.MeetingDTO;
-import dev.nathanyan.MeetPlanner.dto.ParticipantDTO;
 import dev.nathanyan.MeetPlanner.dto.request.meeting.CreateMeetingRequest;
 import dev.nathanyan.MeetPlanner.dto.request.meetingparticipant.MeetingParticipantRequestDTO;
 import dev.nathanyan.MeetPlanner.handler.ResponseHandler;
@@ -69,7 +68,7 @@ public class MeetingController {
             emailsNotFound.remove(email);
         }
 
-        String flashMessage = meetingParticipantService.create(meetingData, participants, body.status());
+        String flashMessage = meetingParticipantService.create(meetingData, participants, body.meetingStatus());
 
         return ResponseHandler.generateResponse(flashMessage, HttpStatus.OK, emailsNotFound);
     }
