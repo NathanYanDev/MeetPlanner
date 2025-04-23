@@ -15,7 +15,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 
 @RestController
@@ -45,11 +47,12 @@ public class MeetingController {
 
     @PostMapping("/create")
     public ResponseEntity<Object> createMeeting(@RequestBody @Validated CreateMeetingRequest body) {
-        Meeting meeting = new Meeting(body.title(), body.dateTime(), body.location(), LocalDateTime.now(), body.duration());
+        LocalDateTime localDateTime = LocalDateTime.parse(body.dateTime());
+        Instant meetingDateTime = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
 
-        if(body.description().isPresent()) {
-            meeting.setDescription(String.valueOf(body.description()));
-        }
+        Meeting meeting = new Meeting(body.title(), meetingDateTime, body.location(), body.duration());
+
+        if(body.description().isPresent()) meeting.setDescription(body.description().get());
 
         try {
             return ResponseHandler.generateResponse("The meeting was created successfully", HttpStatus.CREATED, meetingService.create(meeting));
