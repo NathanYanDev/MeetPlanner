@@ -2,14 +2,14 @@ package dev.nathanyan.MeetPlanner.dto;
 
 import dev.nathanyan.MeetPlanner.model.Meeting;
 
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.List;
 
 public record MeetingDTO(
         String id,
         String title,
         String description,
-        LocalDate dateTime,
+        Instant dateTime,
         String location,
         Integer duration,
         List<ParticipantInfoDTO> participants

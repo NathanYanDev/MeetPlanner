@@ -2,12 +2,12 @@ package dev.nathanyan.MeetPlanner.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jdk.jfr.Timestamp;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -27,13 +27,13 @@ public class Meeting {
     private String description;
 
     @Column(nullable = false)
-    private LocalDate dateTime;
+    private Instant dateTime;
 
     @Column(nullable = false)
     private String location;
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
+    @Column(nullable = false, updatable = false, columnDefinition = "TIMESTAMP")
+    private Instant createdAt;
 
     @Column(nullable = false)
     private Integer duration;
@@ -42,11 +42,16 @@ public class Meeting {
     @JsonIgnore
     private Set<MeetingParticipant> participants = new HashSet<>();
 
-    public Meeting(String title, LocalDate dateTime, String location, LocalDateTime createdAt, Integer duration) {
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = Instant.now();
+    }
+
+
+    public Meeting(String title, Instant dateTime, String location, Integer duration) {
         this.title = title;
         this.dateTime = dateTime;
         this.location = location;
-        this.createdAt = createdAt;
         this.duration = duration;
     }
 

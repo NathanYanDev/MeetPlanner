@@ -4,7 +4,7 @@ import dev.nathanyan.MeetPlanner.model.enums.MeetingStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Getter
 @Setter
@@ -27,13 +27,18 @@ public class MeetingParticipant {
     @Enumerated(EnumType.STRING)
     private MeetingStatus meetingStatus;
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
+    @Column(nullable = false, updatable = false, columnDefinition = "TIMESTAMP")
+    private Instant createdAt;
 
-    public MeetingParticipant(Meeting meeting, Participant participant, MeetingStatus meetingStatus, LocalDateTime createdAt) {
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = Instant.now();
+    }
+
+
+    public MeetingParticipant(Meeting meeting, Participant participant, MeetingStatus meetingStatus) {
         this.meeting = meeting;
         this.participant = participant;
         this.meetingStatus = meetingStatus;
-        this.createdAt = createdAt;
     }
 }

@@ -10,6 +10,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -35,19 +36,19 @@ public class Participant implements UserDetails {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    @Column(nullable = false, updatable = false, columnDefinition = "TIMESTAMP")
+    private Instant createdAt;
 
     @PrePersist
     protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = Instant.now();
     }
 
     @OneToMany(mappedBy = "participant", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private Set<MeetingParticipant> meetings = new HashSet<>();
 
-    public Participant(String email, String name, String password, LocalDateTime createdAt) {
+    public Participant(String email, String name, String password, Instant createdAt) {
         this.email = email.toLowerCase();
         this.name = name;
         this.password = password;
