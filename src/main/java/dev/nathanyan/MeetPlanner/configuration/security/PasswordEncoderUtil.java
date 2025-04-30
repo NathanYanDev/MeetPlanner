@@ -1,4 +1,4 @@
-package dev.nathanyan.MeetPlanner.security;
+package dev.nathanyan.MeetPlanner.configuration.security;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;

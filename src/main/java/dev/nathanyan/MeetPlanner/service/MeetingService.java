@@ -1,5 +1,6 @@
 package dev.nathanyan.MeetPlanner.service;
 
+import dev.nathanyan.MeetPlanner.dto.MeetingDTO;
 import dev.nathanyan.MeetPlanner.model.Meeting;
 import dev.nathanyan.MeetPlanner.repository.MeetingRepository;
 import org.springframework.stereotype.Service;
@@ -15,16 +16,19 @@ public class MeetingService {
         this.meetingRepository = meetingRepository;
     }
 
-    public List<Meeting> getAll() {
-        return meetingRepository.findAll();
+    public List<MeetingDTO> getAll() {
+        return meetingRepository.findAll().stream().map(MeetingDTO::new).toList();
     }
 
     public Optional<Meeting> getById(String meetingId) {
         return meetingRepository.findById(meetingId);
     }
 
-    public Meeting create(Meeting meeting){
-        return meetingRepository.save(meeting);
+    public MeetingDTO create(Meeting meeting){
+        Meeting meetingCreated = meetingRepository.save(meeting);
+
+        return new MeetingDTO(meetingCreated);
+
     }
 
     public void delete(String id) {meetingRepository.deleteById(id);}

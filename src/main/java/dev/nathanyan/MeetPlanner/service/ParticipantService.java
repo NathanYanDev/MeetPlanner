@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class ParticipantService {
@@ -20,7 +21,11 @@ public class ParticipantService {
         return participantRepository.findAll().stream().map(ParticipantDTO::new).toList();
     }
 
+    public Participant getParticipantByEmail(String email) {
+        return participantRepository.getByEmail(email);
+    }
+
     public Set<Participant> getParticipantsByEmail(Iterable<String> emails) {
-            return participantRepository.findAllByEmail(emails);
+            return participantRepository.getAllByEmails(emails);
     }
 }

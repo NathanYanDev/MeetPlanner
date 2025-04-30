@@ -5,7 +5,7 @@ import dev.nathanyan.MeetPlanner.dto.request.authentication.AuthenticationReques
 import dev.nathanyan.MeetPlanner.dto.request.participant.CreateParticipant;
 import dev.nathanyan.MeetPlanner.handler.ResponseHandler;
 import dev.nathanyan.MeetPlanner.service.JWTService;
-import dev.nathanyan.MeetPlanner.security.PasswordEncoderUtil;
+import dev.nathanyan.MeetPlanner.configuration.security.PasswordEncoderUtil;
 import dev.nathanyan.MeetPlanner.service.AuthenticationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +33,9 @@ public class AuthenticationController {
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody @Validated AuthenticationRequest body) {
         UserDetails participant = authenticationService.loadUserByUsername(body.email());
+
+        if(participant == null) return ResponseHandler.generateResponse("Invalid username or password", HttpStatus.UNAUTHORIZED, Collections.emptyList());
+
         if(PasswordEncoderUtil.matches(body.password(), participant.getPassword())) {
             String token = jwtService.generateToken(body.email());
             return ResponseHandler.generateResponse("Authentication successful", HttpStatus.OK, token);

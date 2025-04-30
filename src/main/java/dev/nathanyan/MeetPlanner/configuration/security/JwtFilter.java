@@ -1,4 +1,4 @@
-package dev.nathanyan.MeetPlanner.security;
+package dev.nathanyan.MeetPlanner.configuration.security;
 
 import dev.nathanyan.MeetPlanner.service.AuthenticationService;
 import dev.nathanyan.MeetPlanner.service.JWTService;

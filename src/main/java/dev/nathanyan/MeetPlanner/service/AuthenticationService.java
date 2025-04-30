@@ -4,7 +4,7 @@ import dev.nathanyan.MeetPlanner.dto.ParticipantDTO;
 import dev.nathanyan.MeetPlanner.dto.request.participant.CreateParticipant;
 import dev.nathanyan.MeetPlanner.model.Participant;
 import dev.nathanyan.MeetPlanner.repository.ParticipantRepository;
-import dev.nathanyan.MeetPlanner.security.PasswordEncoderUtil;
+import dev.nathanyan.MeetPlanner.configuration.security.PasswordEncoderUtil;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

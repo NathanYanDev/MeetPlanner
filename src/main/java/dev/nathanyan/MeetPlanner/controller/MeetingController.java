@@ -27,16 +27,18 @@ public class MeetingController {
     private final MeetingService meetingService;
     private final ParticipantService participantService;
     private final MeetingParticipantService meetingParticipantService;
+    private final MailSenderController mailSenderController;
 
-    public MeetingController(MeetingService meetingService, ParticipantService participantService, MeetingParticipantService meetingParticipantService) {
+    public MeetingController(MeetingService meetingService, ParticipantService participantService, MeetingParticipantService meetingParticipantService, MailSenderController mailSenderController) {
         this.meetingService = meetingService;
         this.participantService = participantService;
         this.meetingParticipantService = meetingParticipantService;
+        this.mailSenderController = mailSenderController;
     }
 
     @GetMapping
     public ResponseEntity<Object> getMeetings() {
-        List<MeetingDTO> meetingList = meetingService.getAll().stream().map(MeetingDTO::new).toList();
+        List<MeetingDTO> meetingList = meetingService.getAll();
 
         if(meetingList.isEmpty()) {
             return ResponseHandler.generateResponse("No meeting has yet been created", HttpStatus.OK, Collections.emptyList());
@@ -50,7 +52,9 @@ public class MeetingController {
         LocalDateTime localDateTime = LocalDateTime.parse(body.dateTime());
         Instant meetingDateTime = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
 
-        Meeting meeting = new Meeting(body.title(), meetingDateTime, body.location(), body.duration());
+        Participant organizer = participantService.getParticipantByEmail(body.organizerEmail());
+
+        Meeting meeting = new Meeting(body.title(), meetingDateTime, body.location(), body.duration(), organizer);
 
         if(body.description().isPresent()) meeting.setDescription(body.description().get());
 
@@ -72,6 +76,10 @@ public class MeetingController {
         }
 
         String flashMessage = meetingParticipantService.create(meetingData, participants, body.meetingStatus());
+
+        for(Participant participant: participants) {
+            mailSenderController.sendMail(participant.getEmail(), meetingData);
+        }
 
         return ResponseHandler.generateResponse(flashMessage, HttpStatus.OK, emailsNotFound);
     }
