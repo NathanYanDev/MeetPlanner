@@ -54,6 +54,14 @@
             border-radius: 4px;
             margin-top: 10px;
         }
+        .time-block {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .time-range {
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -74,28 +82,35 @@
             <span class="label">Descrição:</span> <span id="meeting-description" th:text="${meetingDescription}"></span>
         </div>
         <div class="detail-item">
-            <span class="label">Data e Horário:</span> <span id="meeting-time" th:text="${meetingDateTime}"></span>
+            <span class="label">Data e Horário:</span>
+            <div class="time-block">
+                <span class="time-range">
+                    <span id="meeting-start" th:text="${meetingStart}"></span>
+                    <span> - </span>
+                    <span id="meeting-end" th:text="${meetingEnd}"></span>
+                </span>
+            </div>
         </div>
         <div class="detail-item">
             <span class="label">Local:</span> <span id="meeting-location" th:text="${meetingLocation}"></span>
         </div>
-<!--        <div class="detail-item">-->
-<!--            <span class="label">Organizador:</span> <span id="meeting-organizer" th:text="${meetingOrganizer.name} + ' (' + ${meetingOrganizer.email} + ')'"></span>-->
-<!--        </div>-->
-<!--        <div class="detail-item">-->
-<!--            <span class="label">Participantes:</span>-->
-<!--            <ul id="meeting-participants" style="margin-top: 5px; padding-left: 20px;">-->
-<!--                <li th:each="participant : ${participants}">-->
-<!--                    <span th:text="${participant.name} + ' (' + ${participant.email} + ')'"></span>-->
-<!--                </li>-->
-<!--            </ul>-->
-<!--        </div>-->
+        <div class="detail-item">
+            <span class="label">Organizador:</span> <span id="meeting-organizer" th:text="${meetingOrganizer.name} + ' (' + ${meetingOrganizer.email} + ')'"></span>
+        </div>
+        <div class="detail-item">
+            <span class="label">Participantes:</span>
+            <ul id="meeting-participants" style="margin-top: 5px; padding-left: 20px;">
+                <li th:each="participant : ${participants}">
+                    <span th:text="${participant.name} + ' (' + ${participant.email} + ')'"></span>
+                </li>
+            </ul>
+        </div>
     </div>
 
     <p>Por favor, confirme sua presença ou solicite alterações se necessário.</p>
 
-    <button>Confirmar Presença</button>
-    <button>Ver Detalhes no Meet Planner</button>
+    <a href="#" class="button">Confirmar Presença</a>
+    <a href="#" class="button" style="background-color: #757575; margin-left: 10px;">Ver Detalhes no Meet Planner</a>
 
     <p>Atenciosamente,<br>Equipe Meet Planner</p>
 </div>

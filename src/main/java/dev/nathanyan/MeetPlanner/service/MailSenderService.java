@@ -1,5 +1,6 @@
 package dev.nathanyan.MeetPlanner.service;
 
+import dev.nathanyan.MeetPlanner.dto.ParticipantDTO;
 import dev.nathanyan.MeetPlanner.model.Meeting;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -11,7 +12,8 @@ import org.thymeleaf.context.Context;
 
 import java.nio.charset.StandardCharsets;
 import java.time.ZoneId;
-import java.util.Collections;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Locale;
 
 @Service
@@ -34,22 +36,26 @@ public class MailSenderService {
                 StandardCharsets.UTF_8.name()
         );
 
+        List<ParticipantDTO> participants = meetingData.getParticipants().stream().map(meetingParticipant -> new ParticipantDTO(meetingParticipant.getParticipant())).toList();
+
+        String meetingStart = meetingData.getDateTime().atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm"));
+        String meetingEnd = meetingData.getDateTime().atZone(ZoneId.systemDefault()).plusMinutes(meetingData.getDuration()).format(DateTimeFormatter.ofPattern("HH:mm"));
+
         Context ctx = new Context(locale);
         ctx.setVariable("meetingTitle", meetingData.getTitle());
         ctx.setVariable("meetingDescription",
                 meetingData.getDescription() != null ? meetingData.getDescription() : "");
-        ctx.setVariable("meetingDateTime",
-                meetingData.getDateTime().atZone(ZoneId.systemDefault()));
+        ctx.setVariable("meetingStart", meetingStart);
+        ctx.setVariable("meetingEnd", meetingEnd);
         ctx.setVariable("meetingLocation", meetingData.getLocation());
         ctx.setVariable("meetingOrganizer", meetingData.getOrganizer());
-        ctx.setVariable("participants",
-                meetingData.getParticipants() != null ? meetingData.getParticipants() : Collections.emptySet());
+        ctx.setVariable("participants", participants);
 
         final String htmlContent = htmlTemplateEngine.process(templateName, ctx);
 
         message.setTo(to);
         message.setSubject(meetingData.getTitle());
-        message.setText(htmlContent, true); // true = isHtml
+        message.setText(htmlContent, true);
 
         mailSender.send(mimeMessage);
     }

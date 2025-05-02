@@ -54,6 +54,8 @@ public class MeetingController {
 
         Participant organizer = participantService.getParticipantByEmail(body.organizerEmail());
 
+        if(organizer == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Organizer data not found, verify the email typed");
+
         Meeting meeting = new Meeting(body.title(), meetingDateTime, body.location(), body.duration(), organizer);
 
         if(body.description().isPresent()) meeting.setDescription(body.description().get());
