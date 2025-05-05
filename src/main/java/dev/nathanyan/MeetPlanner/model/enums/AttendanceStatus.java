@@ -1,17 +1,21 @@
 package dev.nathanyan.MeetPlanner.model.enums;
 
-public enum MeetingStatus {
+public enum AttendanceStatus {
     CONFIRMED("confirmed"),
     PENDING("pending"),
     DECLINED("declined");
 
     private final String status;
 
-    MeetingStatus(String status) {
+    AttendanceStatus(String status) {
         this.status = status;
     }
 
     public String getStatus() {
         return status;
+    }
+
+    public boolean isConfirmed() {
+        return this == CONFIRMED;
     }
 }

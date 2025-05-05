@@ -1,10 +1,8 @@
 package dev.nathanyan.MeetPlanner.dto;
 
 import dev.nathanyan.MeetPlanner.model.Meeting;
-import dev.nathanyan.MeetPlanner.model.Participant;
 
 import java.time.Instant;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -15,7 +13,7 @@ public record MeetingDTO(
         Instant dateTime,
         String location,
         Integer duration,
-        Participant organizer,
+        ParticipantInfoDTO organizer,
         Set<ParticipantInfoDTO> participants
 ) {
     public MeetingDTO(Meeting meeting) {
@@ -26,7 +24,7 @@ public record MeetingDTO(
                 meeting.getDateTime(),
                 meeting.getLocation(),
                 meeting.getDuration(),
-                meeting.getOrganizer(),
+                new ParticipantInfoDTO(meeting.getOrganizer()),
                 meeting.getParticipants().stream().map(meetingParticipant -> new ParticipantInfoDTO(meetingParticipant.getParticipant())).collect(Collectors.toSet()));
     }
 }

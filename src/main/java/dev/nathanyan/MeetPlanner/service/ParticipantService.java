@@ -6,6 +6,7 @@ import dev.nathanyan.MeetPlanner.repository.ParticipantRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -21,11 +22,11 @@ public class ParticipantService {
         return participantRepository.findAll().stream().map(ParticipantDTO::new).toList();
     }
 
-    public Participant getParticipantByEmail(String email) {
-        return participantRepository.getByEmail(email);
+    public Optional<Participant> getById(String id) {
+        return participantRepository.findById(id);
     }
 
-    public Set<Participant> getParticipantsByEmail(Iterable<String> emails) {
-            return participantRepository.getAllByEmails(emails);
+    public Participant getByEmail(String email) {
+        return participantRepository.getByEmail(email);
     }
 }

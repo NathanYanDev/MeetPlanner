@@ -28,7 +28,6 @@ public class MeetingService {
         Meeting meetingCreated = meetingRepository.save(meeting);
 
         return new MeetingDTO(meetingCreated);
-
     }
 
     public void delete(String id) {meetingRepository.deleteById(id);}
