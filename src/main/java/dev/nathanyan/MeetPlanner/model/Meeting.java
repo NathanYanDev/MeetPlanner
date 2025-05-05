@@ -38,6 +38,10 @@ public class Meeting {
     @Column(nullable = false)
     private Integer duration;
 
+    @ManyToOne
+    @JoinColumn(name = "organizer_id")
+    private Participant organizer;
+
     @OneToMany(mappedBy = "meeting", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private Set<MeetingParticipant> participants = new HashSet<>();
@@ -48,11 +52,12 @@ public class Meeting {
     }
 
 
-    public Meeting(String title, Instant dateTime, String location, Integer duration) {
+    public Meeting(String title, Instant dateTime, String location, Integer duration, Participant organizer) {
         this.title = title;
         this.dateTime = dateTime;
         this.location = location;
         this.duration = duration;
+        this.organizer = organizer;
     }
 
     @Override

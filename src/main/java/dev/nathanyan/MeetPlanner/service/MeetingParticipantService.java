@@ -4,10 +4,10 @@ import dev.nathanyan.MeetPlanner.model.Meeting;
 import dev.nathanyan.MeetPlanner.model.MeetingParticipant;
 import dev.nathanyan.MeetPlanner.model.Participant;
 import dev.nathanyan.MeetPlanner.repository.MeetingParticipantRepository;
-import dev.nathanyan.MeetPlanner.model.enums.MeetingStatus;
+import dev.nathanyan.MeetPlanner.model.enums.AttendanceStatus;
+import javassist.NotFoundException;
+import org.springframework.boot.context.config.ConfigDataResourceNotFoundException;
 import org.springframework.stereotype.Service;
-
-import java.util.Set;
 
 @Service
 public class MeetingParticipantService {
@@ -17,22 +17,26 @@ public class MeetingParticipantService {
         this.meetingParticipantRepository = meetingParticipantRepository;
     }
 
-    public String create(Meeting meeting, Set<Participant> participants, MeetingStatus meetingStatus) {
+    public MeetingParticipant create(Meeting meeting, Participant participant, AttendanceStatus attendanceStatus) {
 
         try {
             MeetingParticipant meetingParticipant = new MeetingParticipant();
 
             meetingParticipant.setMeeting(meeting);
-            meetingParticipant.setMeetingStatus(meetingStatus);
+            meetingParticipant.setAttendanceStatus(attendanceStatus);
+            meetingParticipant.setParticipant(participant);
 
-            for(Participant participant: participants) {
-                meetingParticipant.setParticipant(participant);
-                meetingParticipantRepository.save(meetingParticipant);
-            }
-
-            return "Participants successfully added";
+            return meetingParticipantRepository.save(meetingParticipant);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    public void confirmPresence(Meeting meeting, Participant participant) throws NotFoundException {
+        int updatedRows = meetingParticipantRepository.updateAttendanceStatus(meeting.getId(), participant.getId(), AttendanceStatus.CONFIRMED);
+
+        if(updatedRows == 0) {
+            throw new NotFoundException("Participant or Meeting not found");
         }
     }
 }

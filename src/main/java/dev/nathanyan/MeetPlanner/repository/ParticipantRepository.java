@@ -10,6 +10,10 @@ import java.util.Set;
 
 public interface ParticipantRepository extends JpaRepository<Participant, String> {
     @Query("SELECT p FROM Participant p WHERE p.email IN :emails")
-    Set<Participant> findAllByEmail(@Param("emails") Iterable<String> emails);
+    Set<Participant> getAllByEmails(@Param("emails") Iterable<String> emails);
+
+    @Query("SELECT p FROM Participant p WHERE p.email = :email")
+    Participant getByEmail(@Param("email") String email);
+
     UserDetails findByEmail(String email);
 }

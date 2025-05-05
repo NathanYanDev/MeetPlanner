@@ -1,14 +1,17 @@
 package dev.nathanyan.MeetPlanner.controller;
 
 import dev.nathanyan.MeetPlanner.dto.MeetingDTO;
+import dev.nathanyan.MeetPlanner.dto.MeetingParticipantDTO;
 import dev.nathanyan.MeetPlanner.dto.request.meeting.CreateMeetingRequest;
 import dev.nathanyan.MeetPlanner.dto.request.meetingparticipant.MeetingParticipantRequestDTO;
 import dev.nathanyan.MeetPlanner.handler.ResponseHandler;
 import dev.nathanyan.MeetPlanner.model.Meeting;
 import dev.nathanyan.MeetPlanner.model.Participant;
+import dev.nathanyan.MeetPlanner.model.enums.AttendanceStatus;
 import dev.nathanyan.MeetPlanner.service.MeetingParticipantService;
 import dev.nathanyan.MeetPlanner.service.MeetingService;
 import dev.nathanyan.MeetPlanner.service.ParticipantService;
+import javassist.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -21,22 +24,24 @@ import java.time.ZoneId;
 import java.util.*;
 
 @RestController
-@RequestMapping("/meeting")
+@RequestMapping("/meetings")
 public class MeetingController {
 
     private final MeetingService meetingService;
     private final ParticipantService participantService;
     private final MeetingParticipantService meetingParticipantService;
+    private final MailSenderController mailSenderController;
 
-    public MeetingController(MeetingService meetingService, ParticipantService participantService, MeetingParticipantService meetingParticipantService) {
+    public MeetingController(MeetingService meetingService, ParticipantService participantService, MeetingParticipantService meetingParticipantService, MailSenderController mailSenderController) {
         this.meetingService = meetingService;
         this.participantService = participantService;
         this.meetingParticipantService = meetingParticipantService;
+        this.mailSenderController = mailSenderController;
     }
 
     @GetMapping
     public ResponseEntity<Object> getMeetings() {
-        List<MeetingDTO> meetingList = meetingService.getAll().stream().map(MeetingDTO::new).toList();
+        List<MeetingDTO> meetingList = meetingService.getAll();
 
         if(meetingList.isEmpty()) {
             return ResponseHandler.generateResponse("No meeting has yet been created", HttpStatus.OK, Collections.emptyList());
@@ -50,7 +55,11 @@ public class MeetingController {
         LocalDateTime localDateTime = LocalDateTime.parse(body.dateTime());
         Instant meetingDateTime = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
 
-        Meeting meeting = new Meeting(body.title(), meetingDateTime, body.location(), body.duration());
+        Participant organizer = participantService.getByEmail(body.organizerEmail());
+
+        if(organizer == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Organizer data not found, verify the email typed");
+
+        Meeting meeting = new Meeting(body.title(), meetingDateTime, body.location(), body.duration(), organizer);
 
         if(body.description().isPresent()) meeting.setDescription(body.description().get());
 
@@ -61,24 +70,35 @@ public class MeetingController {
         }
     }
 
-    @PostMapping("/add-participant")
-    public ResponseEntity<Object> addParticipant(@RequestBody @Validated MeetingParticipantRequestDTO body) {
-        Meeting meetingData = meetingService.getById(body.meetingId()).orElseThrow();
-        Set<Participant> participants = participantService.getParticipantsByEmail(body.participantsEmail());
-        List<String> emailsNotFound = new ArrayList<>(body.participantsEmail());
+    @PostMapping("/{id}/participants/add")
+    public ResponseEntity<Object> addParticipant(@RequestBody @Validated MeetingParticipantRequestDTO body, @PathVariable String id) {
+        Meeting meetingData = meetingService.getById(id).orElseThrow();
+        Participant participant = participantService.getByEmail(body.participantEmail());
 
-        for(String email: participants.stream().map(Participant::getEmail).toList()) {
-            emailsNotFound.remove(email);
+        if(participant == null) {
+            return ResponseHandler.generateResponse("Participant not found, make sure you type a correct email", HttpStatus.BAD_REQUEST);
         }
 
-        String flashMessage = meetingParticipantService.create(meetingData, participants, body.meetingStatus());
+        MeetingParticipantDTO meetingParticipantDTO = new MeetingParticipantDTO(meetingParticipantService.create(meetingData, participant, AttendanceStatus.PENDING));
 
-        return ResponseHandler.generateResponse(flashMessage, HttpStatus.OK, emailsNotFound);
+        mailSenderController.sendMail(participant.getEmail(), meetingData);
+
+        return ResponseHandler.generateResponse("Participant successfully added to the meeting", HttpStatus.OK, meetingParticipantDTO);
+    }
+
+    @PatchMapping("/{id}/participants/{participantId}/confirm")
+    public ResponseEntity<Object> confirmPresence(@PathVariable String id, @PathVariable String participantId) throws NotFoundException {
+        Meeting meeting = meetingService.getById(id).orElseThrow();
+        Participant participant = participantService.getById(participantId).orElseThrow();
+
+        meetingParticipantService.confirmPresence(meeting, participant);
+
+        return ResponseHandler.generateResponse("Attendance at the meeting was confirmed", HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> delete(@PathVariable String id){
         meetingService.delete(id);
-        return ResponseHandler.generateResponse("The meeting was deleted successfully", HttpStatus.OK, Collections.emptyList());
+        return ResponseHandler.generateResponse("The meeting was deleted successfully", HttpStatus.OK);
     }
 }

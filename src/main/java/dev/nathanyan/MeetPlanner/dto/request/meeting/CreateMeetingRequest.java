@@ -10,6 +10,7 @@ public record CreateMeetingRequest(
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     String dateTime,
     String location,
-    Integer duration
+    Integer duration,
+    String organizerEmail
 ) {
 }

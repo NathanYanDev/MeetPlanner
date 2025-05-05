@@ -1,6 +1,6 @@
 package dev.nathanyan.MeetPlanner.model;
 
-import dev.nathanyan.MeetPlanner.model.enums.MeetingStatus;
+import dev.nathanyan.MeetPlanner.model.enums.AttendanceStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,7 +25,7 @@ public class MeetingParticipant {
     private Participant participant;
 
     @Enumerated(EnumType.STRING)
-    private MeetingStatus meetingStatus;
+    private AttendanceStatus attendanceStatus;
 
     @Column(nullable = false, updatable = false, columnDefinition = "TIMESTAMP")
     private Instant createdAt;
@@ -36,9 +36,9 @@ public class MeetingParticipant {
     }
 
 
-    public MeetingParticipant(Meeting meeting, Participant participant, MeetingStatus meetingStatus) {
+    public MeetingParticipant(Meeting meeting, Participant participant, AttendanceStatus attendanceStatus) {
         this.meeting = meeting;
         this.participant = participant;
-        this.meetingStatus = meetingStatus;
+        this.attendanceStatus = attendanceStatus;
     }
 }
